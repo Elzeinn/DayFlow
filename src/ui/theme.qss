@@ -1,12 +1,34 @@
 QWidget {
-    background: #0A0A0A;
+    background: transparent;
     color: #E3E3E3;
-    font-family: "Segoe UI";
-    font-size: 13px;
+}
+
+QMainWindow {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #0B0B0C, stop:1 #161618);
+}
+
+QDialog,
+QMessageBox {
+    background: #141416;
 }
 
 QWidget#root {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #0A0A0A, stop:1 #141416);
+    background: transparent;
+}
+
+QWidget#titleBar {
+    background: transparent;
+}
+
+QLabel#logoMark {
+    background: #BEEE11;
+    border-radius: 4px;
+}
+
+QLabel#appTitle {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    font-weight: 600;
 }
 
 QWidget#sidebar {
@@ -27,6 +49,9 @@ QLabel#microLabel {
 
 QLabel#displayTitle {
     color: #FFFFFF;
+    font-size: 26px;
+    font-weight: 700;
+    font-style: italic;
 }
 
 QLabel#statValue {

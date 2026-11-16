@@ -1,8 +1,10 @@
 #include "ui/main_window.hpp"
 
+#include <QAbstractButton>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QDate>
+#include <QEvent>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -10,18 +12,23 @@
 #include <QListWidget>
 #include <QLocale>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QWindow>
 
 #include "data/task_repository.hpp"
 #include "ui/task_row.hpp"
 #include "ui/theme.hpp"
+#include "ui/title_bar.hpp"
 
 namespace dayflow {
 namespace {
+
+constexpr int k_resize_margin = 6;
 
 QPushButton* make_nav_button(const QString& text, bool enabled, bool active)
 {
@@ -48,22 +55,114 @@ QLabel* make_micro_label(const QString& text)
 
 MainWindow::MainWindow(TaskRepository& tasks, QWidget* parent) : QMainWindow(parent), tasks_(tasks)
 {
+    setWindowFlag(Qt::FramelessWindowHint, true);
     setWindowTitle(QStringLiteral("DayFlow"));
     resize(1180, 760);
     setMinimumSize(900, 600);
 
-    auto* root = new QWidget{this};
-    root->setObjectName(QStringLiteral("root"));
+    root_ = new QWidget{this};
+    root_->setObjectName(QStringLiteral("root"));
+    root_->setMouseTracking(true);
 
-    auto* root_layout = new QHBoxLayout{root};
-    root_layout->setContentsMargins(0, 0, 0, 0);
-    root_layout->setSpacing(0);
-    root_layout->addWidget(build_sidebar());
-    root_layout->addWidget(build_content(), 1);
+    outer_layout_ = new QVBoxLayout{root_};
+    outer_layout_->setSpacing(0);
+    apply_window_margins();
 
-    setCentralWidget(root);
+    title_bar_ = new TitleBar{this, root_};
+    outer_layout_->addWidget(title_bar_);
+
+    auto* body = new QHBoxLayout{};
+    body->setContentsMargins(0, 0, 0, 0);
+    body->setSpacing(0);
+    body->addWidget(build_sidebar());
+    body->addWidget(build_content(), 1);
+    outer_layout_->addLayout(body, 1);
+
+    setCentralWidget(root_);
+    root_->installEventFilter(this);
 
     reload();
+}
+
+void MainWindow::apply_window_margins()
+{
+    const bool maximized = isMaximized() || isFullScreen();
+    const int margin = maximized ? 0 : k_resize_margin;
+    outer_layout_->setContentsMargins(margin, margin, margin, margin);
+}
+
+bool MainWindow::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == root_ && !isMaximized() && !isFullScreen()) {
+        if (event->type() == QEvent::MouseMove) {
+            auto* mouse_event = static_cast<QMouseEvent*>(event);
+            update_resize_cursor(edges_at(mouse_event->position().toPoint()));
+        } else if (event->type() == QEvent::MouseButtonPress) {
+            auto* mouse_event = static_cast<QMouseEvent*>(event);
+            if (mouse_event->button() == Qt::LeftButton) {
+                const Qt::Edges edges = edges_at(mouse_event->position().toPoint());
+                if (edges != Qt::Edges{}) {
+                    if (QWindow* handle = windowHandle(); handle != nullptr) {
+                        handle->startSystemResize(edges);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::WindowStateChange) {
+        apply_window_margins();
+        if (title_bar_ != nullptr) {
+            title_bar_->set_maximized(isMaximized());
+        }
+    }
+    QMainWindow::changeEvent(event);
+}
+
+Qt::Edges MainWindow::edges_at(const QPoint& position) const
+{
+    Qt::Edges edges;
+    const QRect area = root_->rect();
+    if (position.x() <= k_resize_margin) {
+        edges |= Qt::LeftEdge;
+    }
+    if (position.x() >= area.width() - k_resize_margin) {
+        edges |= Qt::RightEdge;
+    }
+    if (position.y() <= k_resize_margin) {
+        edges |= Qt::TopEdge;
+    }
+    if (position.y() >= area.height() - k_resize_margin) {
+        edges |= Qt::BottomEdge;
+    }
+    return edges;
+}
+
+void MainWindow::update_resize_cursor(Qt::Edges edges)
+{
+    Qt::CursorShape shape = Qt::ArrowCursor;
+
+    const bool left = edges.testFlag(Qt::LeftEdge);
+    const bool right = edges.testFlag(Qt::RightEdge);
+    const bool top = edges.testFlag(Qt::TopEdge);
+    const bool bottom = edges.testFlag(Qt::BottomEdge);
+
+    if ((left && top) || (right && bottom)) {
+        shape = Qt::SizeFDiagCursor;
+    } else if ((right && top) || (left && bottom)) {
+        shape = Qt::SizeBDiagCursor;
+    } else if (left || right) {
+        shape = Qt::SizeHorCursor;
+    } else if (top || bottom) {
+        shape = Qt::SizeVerCursor;
+    }
+
+    root_->setCursor(shape);
 }
 
 QWidget* MainWindow::build_sidebar()
@@ -148,6 +247,8 @@ QWidget* MainWindow::build_content()
     auto* title = new QLabel{QStringLiteral("Tugas")};
     title->setObjectName(QStringLiteral("displayTitle"));
     title->setFont(theme::display_font());
+    title->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    title->setFixedHeight(40);
     header->addWidget(title);
 
     layout->addLayout(header);
@@ -187,18 +288,19 @@ QWidget* MainWindow::build_content()
     auto* tab_bar = new QFrame{};
     tab_bar->setObjectName(QStringLiteral("tabBar"));
     tab_bar->setFixedHeight(38);
+    tab_bar->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     auto* tab_layout = new QHBoxLayout{tab_bar};
     tab_layout->setContentsMargins(3, 3, 3, 3);
     tab_layout->setSpacing(4);
 
     auto* group = new QButtonGroup{this};
     group->setExclusive(true);
+    filter_group_ = group;
     const QStringList tab_names{QStringLiteral("SEMUA"), QStringLiteral("AKTIF"), QStringLiteral("SELESAI")};
     for (int index = 0; index < tab_names.size(); ++index) {
         auto* tab = new QPushButton{tab_names.at(index)};
         tab->setObjectName(QStringLiteral("tab"));
         tab->setCheckable(true);
-        tab->setChecked(index == 0);
         tab->setCursor(Qt::PointingHandCursor);
         group->addButton(tab, index);
         tab_layout->addWidget(tab);
@@ -207,6 +309,7 @@ QWidget* MainWindow::build_content()
 
     auto* tab_wrapper = new QHBoxLayout{};
     tab_wrapper->addWidget(tab_bar);
+    tab_wrapper->addStretch(1);
     layout->addLayout(tab_wrapper);
 
     task_list_ = new QListWidget{};
@@ -241,6 +344,12 @@ void MainWindow::reload()
     }
 
     update_stats(listed.value());
+
+    if (filter_group_ != nullptr) {
+        for (QAbstractButton* button : filter_group_->buttons()) {
+            button->setChecked(filter_group_->id(button) == filter_);
+        }
+    }
 
     task_list_->clear();
 

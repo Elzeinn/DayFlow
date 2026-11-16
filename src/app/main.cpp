@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QFont>
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QStyleFactory>
@@ -16,6 +17,7 @@ int main(int argc, char* argv[])
     app.setApplicationName(QStringLiteral("DayFlow"));
 
     QApplication::setStyle(QStyleFactory::create(QStringLiteral("Fusion")));
+    app.setFont(QFont{QStringLiteral("Segoe UI"), 10});
     app.setStyleSheet(dayflow::theme::style_sheet());
 
     const QString data_directory = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);

@@ -34,6 +34,7 @@ QLabel* make_chip(const QString& text, bool urgent)
 TaskRow::TaskRow(const Task& task, QWidget* parent) : QWidget(parent), id_(task.id)
 {
     setObjectName(QStringLiteral("taskRow"));
+    setAttribute(Qt::WA_StyledBackground, true);
     setAttribute(Qt::WA_Hover);
     setFixedHeight(62);
 
