@@ -1,0 +1,35 @@
+# Build output
+/build/
+/cmake-build-*/
+/out/
+CMakeUserPresets.json
+
+# vcpkg
+/vcpkg_installed/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.VC.db
+
+# Qt generated
+*.autosave
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Local runtime data
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+/logs/
+/dayflow.log
+
+# OS
+Thumbs.db
+Desktop.ini
