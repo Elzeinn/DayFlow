@@ -1,6 +1,7 @@
 #include "ui/theme.hpp"
 
 #include <QFile>
+#include <QLabel>
 
 namespace dayflow::theme {
 
@@ -29,6 +30,23 @@ QFont display_font()
     font.setWeight(QFont::Bold);
     font.setItalic(true);
     return font;
+}
+
+QFont dialog_title_font()
+{
+    QFont font{QStringLiteral("Segoe UI")};
+    font.setPixelSize(20);
+    font.setWeight(QFont::Bold);
+    font.setItalic(true);
+    return font;
+}
+
+QLabel* make_micro_label(const QString& text)
+{
+    auto* label = new QLabel{text};
+    label->setObjectName(QStringLiteral("microLabel"));
+    label->setFont(micro_font());
+    return label;
 }
 
 }  // namespace dayflow::theme

@@ -7,6 +7,7 @@
 #include <filesystem>
 
 #include "data/database.hpp"
+#include "data/event_repository.hpp"
 #include "data/task_repository.hpp"
 #include "ui/main_window.hpp"
 #include "ui/theme.hpp"
@@ -32,7 +33,14 @@ int main(int argc, char* argv[])
     }
 
     dayflow::TaskRepository tasks{*database.value()};
-    dayflow::MainWindow window{tasks};
+    dayflow::EventRepository events{*database.value()};
+    dayflow::EventCategoryRepository categories{*database.value()};
+
+    if (dayflow::Error error = categories.ensure_defaults()) {
+        QMessageBox::warning(nullptr, QStringLiteral("DayFlow"), QString::fromStdString(error.message));
+    }
+
+    dayflow::MainWindow window{tasks, events, categories};
     window.show();
 
     return app.exec();

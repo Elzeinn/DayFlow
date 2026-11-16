@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -85,6 +86,16 @@ TaskRow::TaskRow(const Task& task, QWidget* parent) : QWidget(parent), id_(task.
 
     connect(done_box, &QCheckBox::toggled, this, [this](bool) { emit toggled(id_); });
     connect(remove_button, &QPushButton::clicked, this, [this] { emit remove_requested(id_); });
+}
+
+void TaskRow::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton) {
+        emit edit_requested(id_);
+        event->accept();
+        return;
+    }
+    QWidget::mouseDoubleClickEvent(event);
 }
 
 }  // namespace dayflow

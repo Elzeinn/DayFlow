@@ -312,3 +312,246 @@ QToolTip {
     border: 1px solid rgba(255, 255, 255, 0.10);
     padding: 5px 8px;
 }
+
+/* ---------- kalender ---------- */
+
+QPushButton#iconButton {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 15px;
+}
+
+QPushButton#iconButton:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: #FFFFFF;
+}
+
+QPushButton#secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 7px;
+    padding: 9px 14px;
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 600;
+}
+
+QPushButton#secondary:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+QPushButton#danger {
+    background: rgba(255, 85, 85, 0.14);
+    border: 1px solid rgba(255, 85, 85, 0.28);
+    border-radius: 7px;
+    padding: 9px 14px;
+    color: #FF8A8A;
+    font-weight: 600;
+}
+
+QPushButton#danger:hover {
+    background: rgba(255, 85, 85, 0.24);
+}
+
+QFrame#dayCell {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 7px;
+}
+
+QFrame#dayCell:hover {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+QFrame#dayCell[inMonth="false"] {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+QFrame#dayCell[today="true"] {
+    border: 1px solid rgba(190, 238, 17, 0.45);
+}
+
+QFrame#dayCell[selected="true"] {
+    background: rgba(190, 238, 17, 0.10);
+    border: 1px solid rgba(190, 238, 17, 0.65);
+}
+
+QLabel#dayNumber {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+QFrame#dayCell[inMonth="false"] QLabel#dayNumber {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+QLabel#dayEntry {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 10px;
+}
+
+QLabel#dayEntryMore {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 10px;
+}
+
+QLabel#agendaTitle {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton#agendaItem {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    padding: 7px 9px;
+    text-align: left;
+    color: #E3E3E3;
+    font-size: 12px;
+}
+
+QPushButton#agendaItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+QLabel#agendaEmpty {
+    color: rgba(255, 255, 255, 0.30);
+    font-size: 12px;
+}
+
+/* ---------- dialog event ---------- */
+
+QLabel#dialogTitle {
+    color: #FFFFFF;
+}
+
+QDialog QLabel {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 12px;
+}
+
+QLineEdit#field,
+QComboBox#field,
+QDateTimeEdit#field,
+QSpinBox#field {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    padding: 7px 10px;
+    color: #FFFFFF;
+    min-height: 18px;
+}
+
+QLineEdit#field:focus,
+QComboBox#field:focus,
+QDateTimeEdit#field:focus,
+QSpinBox#field:focus {
+    border: 1px solid rgba(190, 238, 17, 0.60);
+}
+
+QCalendarWidget QAbstractItemView {
+    background: #141416;
+    color: #E3E3E3;
+    selection-background-color: rgba(190, 238, 17, 0.25);
+    selection-color: #FFFFFF;
+}
+
+/* ---------- komponen kustom: select & date field ---------- */
+
+QFrame#select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+}
+
+QFrame#select:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+QLabel#selectValue {
+    color: #FFFFFF;
+    font-size: 13px;
+}
+
+QLabel#selectChevron {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 10px;
+}
+
+QFrame#selectPopup {
+    background: #161618;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+QPushButton#selectItem {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    color: #E3E3E3;
+    font-size: 13px;
+}
+
+QPushButton#selectItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+QPushButton#selectItem[current="true"] {
+    color: #BEEE11;
+    font-weight: 700;
+}
+
+QFrame#datePopup {
+    background: #161618;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+QLabel#datePopupMonth {
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+QLabel#datePopupWeekday {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+QPushButton#dateCell {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #E3E3E3;
+    font-size: 12px;
+}
+
+QPushButton#dateCell[outside="true"] {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+QPushButton#dateCell:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+QPushButton#dateCell:checked {
+    background: #BEEE11;
+    color: #0A0A0A;
+    font-weight: 800;
+}
+
+QLabel#agendaHoliday {
+    background: rgba(229, 193, 88, 0.10);
+    border-left: 2px solid #E5C158;
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: #E5C158;
+    font-size: 12px;
+}

@@ -375,9 +375,38 @@ std::string Statement::column_text(int index)
     return std::string{text, static_cast<std::size_t>(sqlite3_column_bytes(stmt_, index))};
 }
 
+bool Statement::is_null(int index)
+{
+    return sqlite3_column_type(stmt_, index) == SQLITE_NULL;
+}
+
+std::optional<int> Statement::column_optional_int(int index)
+{
+    if (is_null(index)) {
+        return std::nullopt;
+    }
+    return sqlite3_column_int(stmt_, index);
+}
+
+std::optional<std::int64_t> Statement::column_optional_int64(int index)
+{
+    if (is_null(index)) {
+        return std::nullopt;
+    }
+    return sqlite3_column_int64(stmt_, index);
+}
+
+std::optional<std::string> Statement::column_optional_text(int index)
+{
+    if (is_null(index)) {
+        return std::nullopt;
+    }
+    return column_text(index);
+}
+
 Result<std::optional<Timestamp>> Statement::column_optional_timestamp(int index)
 {
-    if (sqlite3_column_type(stmt_, index) == SQLITE_NULL) {
+    if (is_null(index)) {
         return std::optional<Timestamp>{};
     }
     const std::string text = column_text(index);
@@ -386,6 +415,27 @@ Result<std::optional<Timestamp>> Statement::column_optional_timestamp(int index)
         return parsed.error();
     }
     return std::optional<Timestamp>{parsed.value()};
+}
+
+Transaction::Transaction(Database& database) : database_(database)
+{
+    database_.exec("BEGIN IMMEDIATE");
+}
+
+Transaction::~Transaction()
+{
+    if (active_) {
+        database_.exec("ROLLBACK");
+    }
+}
+
+Error Transaction::commit()
+{
+    if (Error error = database_.exec("COMMIT")) {
+        return error;
+    }
+    active_ = false;
+    return {};
 }
 
 }  // namespace dayflow

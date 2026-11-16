@@ -39,6 +39,10 @@ public:
     std::int64_t column_int64(int index);
     int column_int(int index);
     std::string column_text(int index);
+    bool is_null(int index);
+    std::optional<int> column_optional_int(int index);
+    std::optional<std::int64_t> column_optional_int64(int index);
+    std::optional<std::string> column_optional_text(int index);
     Result<std::optional<Timestamp>> column_optional_timestamp(int index);
 
 private:
@@ -77,6 +81,21 @@ private:
 
     sqlite3* handle_ = nullptr;
     std::mutex mutex_;
+};
+
+class Transaction {
+public:
+    explicit Transaction(Database& database);
+    ~Transaction();
+
+    Transaction(const Transaction&) = delete;
+    Transaction& operator=(const Transaction&) = delete;
+
+    Error commit();
+
+private:
+    Database& database_;
+    bool active_ = true;
 };
 
 }  // namespace dayflow
