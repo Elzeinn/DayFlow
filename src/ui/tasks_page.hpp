@@ -24,6 +24,9 @@ class TasksPage : public QWidget {
 public:
     explicit TasksPage(TaskRepository& tasks, QWidget* parent = nullptr);
 
+protected:
+    void showEvent(QShowEvent* event) override;
+
 private:
     QWidget* make_stat_card(const QString& label, QLabel** value_label, bool with_progress);
 

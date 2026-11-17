@@ -8,7 +8,10 @@
 
 #include "data/database.hpp"
 #include "data/event_repository.hpp"
+#include "data/note_repository.hpp"
+#include "data/routine_repository.hpp"
 #include "data/task_repository.hpp"
+#include "ui/app_context.hpp"
 #include "ui/main_window.hpp"
 #include "ui/theme.hpp"
 
@@ -35,12 +38,18 @@ int main(int argc, char* argv[])
     dayflow::TaskRepository tasks{*database.value()};
     dayflow::EventRepository events{*database.value()};
     dayflow::EventCategoryRepository categories{*database.value()};
+    dayflow::RoutineRepository routines{*database.value()};
+    dayflow::HabitRepository habits{*database.value()};
+    dayflow::NoteRepository notes{*database.value()};
 
     if (dayflow::Error error = categories.ensure_defaults()) {
         QMessageBox::warning(nullptr, QStringLiteral("DayFlow"), QString::fromStdString(error.message));
     }
 
-    dayflow::MainWindow window{tasks, events, categories};
+    const dayflow::AppContext context{
+        tasks, events, categories, routines, habits, notes, *database.value(), database_path};
+
+    dayflow::MainWindow window{context};
     window.show();
 
     return app.exec();

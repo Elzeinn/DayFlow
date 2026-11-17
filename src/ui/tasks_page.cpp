@@ -119,6 +119,11 @@ TasksPage::TasksPage(TaskRepository& tasks, QWidget* parent) : QWidget(parent), 
     reload();
 }
 
+void TasksPage::showEvent(QShowEvent*)
+{
+    reload();
+}
+
 QWidget* TasksPage::make_stat_card(const QString& label, QLabel** value_label, bool with_progress)
 {
     auto* card = new QFrame{};

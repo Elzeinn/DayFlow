@@ -85,6 +85,13 @@ CalendarPage::CalendarPage(EventRepository& events, EventCategoryRepository& cat
     rebuild();
 }
 
+void CalendarPage::showEvent(QShowEvent*)
+{
+    if (grid_ != nullptr) {
+        rebuild();
+    }
+}
+
 QWidget* CalendarPage::build_toolbar()
 {
     auto* toolbar = new QWidget{};

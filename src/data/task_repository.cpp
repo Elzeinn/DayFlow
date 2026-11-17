@@ -138,6 +138,39 @@ Result<std::vector<Task>> TaskRepository::list_by_status(TaskStatus status)
     return tasks;
 }
 
+Result<std::vector<Task>> TaskRepository::search(std::string_view query, std::size_t limit)
+{
+    auto guard = database_.lock();
+    auto statement = database_.prepare(std::string{"SELECT "} + k_columns
+        + " FROM tasks WHERE title LIKE ?1 ESCAPE '\\' ORDER BY sort_order, id LIMIT ?2");
+    if (!statement.ok()) {
+        return statement.error();
+    }
+    if (Error error = statement.value().bind(1, like_pattern(query))) {
+        return error;
+    }
+    if (Error error = statement.value().bind(2, static_cast<int>(limit))) {
+        return error;
+    }
+
+    std::vector<Task> tasks;
+    for (;;) {
+        auto row = statement.value().step();
+        if (!row.ok()) {
+            return row.error();
+        }
+        if (!row.value()) {
+            break;
+        }
+        auto task = read_task(statement.value());
+        if (!task.ok()) {
+            return task.error();
+        }
+        tasks.push_back(std::move(task.value()));
+    }
+    return tasks;
+}
+
 Result<std::optional<Task>> TaskRepository::find(std::int64_t id)
 {
     auto guard = database_.lock();

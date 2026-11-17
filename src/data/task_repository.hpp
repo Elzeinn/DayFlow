@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 #include "core/error.hpp"
@@ -17,6 +18,7 @@ public:
 
     Result<std::vector<Task>> list_all();
     Result<std::vector<Task>> list_by_status(TaskStatus status);
+    Result<std::vector<Task>> search(std::string_view query, std::size_t limit);
     Result<std::optional<Task>> find(std::int64_t id);
     Result<Task> create(Task task);
     Error update(Task task);

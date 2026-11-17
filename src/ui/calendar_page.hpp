@@ -38,6 +38,9 @@ class CalendarPage : public QWidget {
 public:
     CalendarPage(EventRepository& events, EventCategoryRepository& categories, QWidget* parent = nullptr);
 
+protected:
+    void showEvent(QShowEvent* event) override;
+
 private:
     QWidget* build_toolbar();
     QWidget* build_agenda_panel();

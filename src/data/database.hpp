@@ -18,6 +18,8 @@ namespace dayflow {
 
 inline constexpr int k_schema_version = 1;
 
+std::string like_pattern(std::string_view text);
+
 class Statement {
 public:
     Statement(Statement&& other) noexcept;
@@ -73,6 +75,7 @@ public:
 
     Result<std::int64_t> last_insert_rowid();
     int changes() const;
+    Error backup_to(const std::filesystem::path& path);
 
     std::unique_lock<std::mutex> lock();
 

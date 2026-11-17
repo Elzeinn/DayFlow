@@ -555,3 +555,187 @@ QLabel#agendaHoliday {
     color: #E5C158;
     font-size: 12px;
 }
+
+/* ---------- header dialog kustom ---------- */
+
+QWidget#dialogHeader {
+    background: transparent;
+}
+
+QLabel#dialogHeading {
+    color: #FFFFFF;
+}
+
+QScrollArea#taskScroll {
+    background: transparent;
+    border: none;
+}
+
+QScrollArea#taskScroll > QWidget > QWidget {
+    background: transparent;
+}
+
+/* ---------- rutinitas & kebiasaan ---------- */
+
+QWidget#routineRow {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 7px;
+}
+
+QLabel#routineTitle {
+    color: #E3E3E3;
+}
+
+QPushButton#miniButton {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+QPushButton#miniButton:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #E3E3E3;
+}
+
+QPushButton#scheduleItem {
+    background: rgba(255, 255, 255, 0.04);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    color: #E3E3E3;
+    font-size: 12px;
+}
+
+QPushButton#scheduleItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+QPushButton#dayToggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+    padding: 5px 9px;
+    color: rgba(255, 255, 255, 0.60);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+QPushButton#dayToggle:checked {
+    background: #BEEE11;
+    border: 1px solid #BEEE11;
+    color: #0A0A0A;
+}
+
+QLabel#habitStreak {
+    color: rgba(255, 255, 255, 0.40);
+    font-size: 11px;
+}
+
+QFrame#habitDot {
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 5px;
+}
+
+QFrame#habitDot[on="true"] {
+    background: #BEEE11;
+}
+
+/* ---------- pengaturan ---------- */
+
+QLabel#settingValue {
+    color: #E3E3E3;
+    font-size: 13px;
+}
+
+QLabel#settingNote {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 11px;
+}
+
+/* ---------- catatan ---------- */
+
+QListWidget#noteList {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+QListWidget#noteList::item {
+    padding: 7px 8px;
+    border-radius: 6px;
+    color: #E3E3E3;
+    font-size: 12px;
+}
+
+QListWidget#noteList::item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+QListWidget#noteList::item:selected {
+    background: rgba(190, 238, 17, 0.14);
+    color: #FFFFFF;
+}
+
+QTextEdit#noteEditor {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px;
+    color: #E3E3E3;
+    font-size: 13px;
+    selection-background-color: rgba(190, 238, 17, 0.30);
+}
+
+QTextEdit#noteEditor:focus {
+    border: 1px solid rgba(190, 238, 17, 0.45);
+}
+
+/* ---------- pencarian global ---------- */
+
+QLineEdit#searchField {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: #FFFFFF;
+    font-size: 14px;
+    selection-background-color: #BEEE11;
+    selection-color: #0A0A0A;
+}
+
+QLineEdit#searchField:focus {
+    border: 1px solid rgba(190, 238, 17, 0.55);
+}
+
+QListWidget#searchResults {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+QListWidget#searchResults::item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #E3E3E3;
+    font-size: 13px;
+}
+
+QListWidget#searchResults::item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+QListWidget#searchResults::item:selected {
+    background: rgba(190, 238, 17, 0.14);
+    color: #FFFFFF;
+}
+
+QLabel#searchHint {
+    color: rgba(255, 255, 255, 0.30);
+    font-size: 11px;
+}

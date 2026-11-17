@@ -158,6 +158,19 @@ Error apply_migrations(Database& database)
 
 }  // namespace
 
+std::string like_pattern(std::string_view text)
+{
+    std::string pattern{"%"};
+    for (const char character : text) {
+        if (character == '\\' || character == '%' || character == '_') {
+            pattern += '\\';
+        }
+        pattern += character;
+    }
+    pattern += '%';
+    return pattern;
+}
+
 Result<std::unique_ptr<Database>> Database::open(const std::filesystem::path& path)
 {
     if (path != ":memory:") {
@@ -262,6 +275,23 @@ Result<std::int64_t> Database::last_insert_rowid()
 int Database::changes() const
 {
     return sqlite3_changes(handle_);
+}
+
+Error Database::backup_to(const std::filesystem::path& path)
+{
+    std::error_code code;
+    std::filesystem::remove(path, code);
+
+    std::string escaped;
+    for (const char character : path.string()) {
+        if (character == '\'') {
+            escaped += '\'';
+        }
+        escaped += character;
+    }
+
+    auto guard = lock();
+    return exec("VACUUM INTO '" + escaped + "'");
 }
 
 std::unique_lock<std::mutex> Database::lock()

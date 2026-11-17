@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 #include "core/error.hpp"
@@ -17,6 +18,7 @@ public:
     explicit EventRepository(Database& database) : database_(database) {}
 
     Result<std::vector<Event>> list_for_range(Timestamp range_start, Timestamp range_end);
+    Result<std::vector<Event>> search(std::string_view query, std::size_t limit);
     Result<std::optional<Event>> find(std::int64_t id);
     Result<Event> create(Event event);
     Error update(Event event);

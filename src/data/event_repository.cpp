@@ -270,6 +270,39 @@ Result<std::vector<Event>> EventRepository::list_for_range(Timestamp range_start
     return events;
 }
 
+Result<std::vector<Event>> EventRepository::search(std::string_view query, std::size_t limit)
+{
+    auto guard = database_.lock();
+    auto statement = database_.prepare(std::string{k_event_select}
+        + " WHERE e.title LIKE ?1 ESCAPE '\\' ORDER BY e.starts_at_utc DESC LIMIT ?2");
+    if (!statement.ok()) {
+        return statement.error();
+    }
+    if (Error error = statement.value().bind(1, like_pattern(query))) {
+        return error;
+    }
+    if (Error error = statement.value().bind(2, static_cast<int>(limit))) {
+        return error;
+    }
+
+    std::vector<Event> events;
+    for (;;) {
+        auto row = statement.value().step();
+        if (!row.ok()) {
+            return row.error();
+        }
+        if (!row.value()) {
+            break;
+        }
+        auto event = read_event(statement.value());
+        if (!event.ok()) {
+            return event.error();
+        }
+        events.push_back(std::move(event.value()));
+    }
+    return events;
+}
+
 Result<std::optional<Event>> EventRepository::find(std::int64_t id)
 {
     auto guard = database_.lock();

@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 
 #include "ui/date_field.hpp"
+#include "ui/dialog_header.hpp"
 #include "ui/select.hpp"
 #include "ui/theme.hpp"
 #include "ui/time_util.hpp"
@@ -21,16 +22,21 @@ TaskDialog::TaskDialog(const std::optional<Task>& existing, QWidget* parent)
     const bool editing = existing.has_value();
 
     setWindowTitle(editing ? QStringLiteral("Edit Tugas") : QStringLiteral("Tugas Baru"));
+    setWindowFlag(Qt::FramelessWindowHint, true);
     setMinimumWidth(460);
 
     auto* layout = new QVBoxLayout{this};
-    layout->setContentsMargins(22, 20, 22, 20);
-    layout->setSpacing(14);
+    layout->setContentsMargins(0, 0, 0, 20);
+    layout->setSpacing(0);
 
-    auto* heading = new QLabel{editing ? QStringLiteral("Edit Tugas") : QStringLiteral("Tugas Baru")};
-    heading->setObjectName(QStringLiteral("dialogTitle"));
-    heading->setFont(theme::dialog_title_font());
-    layout->addWidget(heading);
+    layout->addWidget(
+        new DialogHeader{editing ? QStringLiteral("Edit Tugas") : QStringLiteral("Tugas Baru"), this, this});
+    layout->addSpacing(10);
+
+    auto* body = new QVBoxLayout{};
+    body->setContentsMargins(22, 0, 22, 0);
+    body->setSpacing(14);
+    layout->addLayout(body);
 
     auto* form = new QFormLayout{};
     form->setSpacing(10);
@@ -60,7 +66,7 @@ TaskDialog::TaskDialog(const std::optional<Task>& existing, QWidget* parent)
     notes_->setPlaceholderText(QStringLiteral("Opsional"));
     form->addRow(QStringLiteral("Catatan"), notes_);
 
-    layout->addLayout(form);
+    body->addLayout(form);
 
     auto* buttons = new QHBoxLayout{};
     buttons->setSpacing(8);
@@ -77,8 +83,8 @@ TaskDialog::TaskDialog(const std::optional<Task>& existing, QWidget* parent)
     buttons->addStretch(1);
     buttons->addWidget(cancel_button);
     buttons->addWidget(save_button);
-    layout->addSpacing(4);
-    layout->addLayout(buttons);
+    body->addSpacing(4);
+    body->addLayout(buttons);
 
     if (editing) {
         title_->setText(QString::fromStdString(task_.title));
